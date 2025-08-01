@@ -1,8 +1,0 @@
-<Job>
-  <JOBNAME>CTM_LoadLoanPosition</JOBNAME>
-  <APPLICATION>Treasury</APPLICATION>
-  <COMMAND>"C:\\Program Files\\Microsoft SQL Server\\150\\DTS\\Binn\\DTExec.exe" /F "C:\\ssis\\LoadLoanPosition.dtsx"</COMMAND>
-  <NODEID>SSIS_SERVER</NODEID>
-  <TIME>0900</TIME>
-  <DESCRIPTION>Runs SSIS package to load daily loan position</DESCRIPTION>
-</Job>

@@ -1,0 +1,95 @@
+{
+  "CTM_CapitalLiquidityAnalysis": {
+    "Type": "Job:Command",
+    "Application": "Treasury",
+    "SubApplication": "RegulatoryReporting",
+    "Host": "treasury-etl-server",
+    "RunAs": "treasury_service",
+    "Command": "dtexec /f \"C:\\SSIS\\Packages\\CapitalLiquidityAnalysis.dtsx\" /set \\Package.Variables[User::ReportingDate].Properties[Value];\"$(ODATE)\" /checkpointing off /reporting ewcdi",
+    "Description": "Calculate Capital Adequacy Ratios and perform Liquidity Stress Testing for regulatory compliance",
+    "When": {
+      "RuleBasedCalendar": "BusinessDays",
+      "Time": "07:00"
+    },
+    "Priority": "Critical",
+    "MaxWait": "90",
+    "TaskType": "OS",
+    "CreatedBy": "treasury_admin",
+    "RunAccount": "treasury_service",
+    "LogLevel": "Debug",
+    "RetryTimes": "2",
+    "RetryInterval": "15",
+    "Variables": [
+      {
+        "REPORTING_DATE": "%%ODATE"
+      },
+      {
+        "STRESS_SCENARIO": "Severe"
+      },
+      {
+        "REGULATORY_FRAMEWORK": "Basel III"
+      }
+    ],
+    "Events": [
+      {
+        "Event": "CapitalLiquidityAnalysis-OK",
+        "Action": "ADD"
+      },
+      {
+        "Event": "RegulatoryReporting-Ready",
+        "Action": "ADD"
+      }
+    ],
+    "Conditions": [
+      {
+        "Event": "TreasuryRiskAnalytics-OK",
+        "Action": "WAIT"
+      },
+      {
+        "Event": "CoreDepositsProcessing-OK",
+        "Action": "WAIT"
+      }
+    ],
+    "Notification": {
+      "Mail": {
+        "To": "regulatory-reporting@bank.com,cro-office@bank.com",
+        "Subject": "Capital & Liquidity Analysis Completed",
+        "Message": "Capital Adequacy and Liquidity Analysis completed for %%ODATE. Status: %%JOBSTAT. Please review regulatory ratios.",
+        "Urgency": "High"
+      },
+      "SMS": {
+        "To": "+1234567890",
+        "Message": "Capital/Liquidity Analysis %%JOBSTAT for %%ODATE"
+      }
+    },
+    "Resources": {
+      "CPU": "6",
+      "Memory": "12GB",
+      "DiskSpace": "3GB"
+    },
+    "SLA": {
+      "ExpectedRunTime": "45",
+      "MaxRunTime": "90",
+      "CriticalPath": "Yes",
+      "BusinessImpact": "High"
+    },
+    "PostProcessing": {
+      "OnSuccess": [
+        {
+          "Action": "GenerateReport",
+          "ReportType": "CapitalAdequacyDashboard"
+        },
+        {
+          "Action": "TriggerEvent",
+          "Event": "RegulatoryDataReady-OK"
+        }
+      ],
+      "OnFailure": [
+        {
+          "Action": "EscalateAlert",
+          "Recipients": "treasury-manager@bank.com,cro@bank.com"
+        }
+      ]
+    }
+  }
+}

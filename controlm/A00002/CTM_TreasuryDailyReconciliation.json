@@ -1,0 +1,89 @@
+{
+  "CTM_TreasuryDailyReconciliation": {
+    "Type": "Job:Command",
+    "Application": "Treasury",
+    "SubApplication": "Reconciliation",
+    "Host": "treasury-etl-server",
+    "RunAs": "treasury_service",
+    "Command": "dtexec /f \"C:\\SSIS\\Packages\\TreasuryReconciliation.dtsx\" /set \\Package.Variables[User::ReconciliationDate].Properties[Value];\"$(ODATE)\" /checkpointing off /reporting ewcdi",
+    "Description": "Perform daily treasury reconciliation across all funding sources, deposits, and investment positions",
+    "When": {
+      "RuleBasedCalendar": "BusinessDays",
+      "Time": "09:00"
+    },
+    "Priority": "Critical",
+    "MaxWait": "120",
+    "TaskType": "OS",
+    "CreatedBy": "treasury_admin",
+    "RunAccount": "treasury_service",
+    "LogLevel": "Debug",
+    "RetryTimes": "1",
+    "RetryInterval": "30",
+    "Variables": [
+      {
+        "RECONCILIATION_DATE": "%%ODATE"
+      },
+      {
+        "TOLERANCE_THRESHOLD": "1000.00"
+      }
+    ],
+    "Events": [
+      {
+        "Event": "TreasuryReconciliation-OK",
+        "Action": "ADD"
+      },
+      {
+        "Event": "DailyTreasuryClose-OK",
+        "Action": "ADD"
+      }
+    ],
+    "Conditions": [
+      {
+        "Event": "NetInterestMarginAnalysis-OK",
+        "Action": "WAIT"
+      },
+      {
+        "Event": "CapitalLiquidityAnalysis-OK",
+        "Action": "WAIT"
+      }
+    ],
+    "Notification": {
+      "Mail": {
+        "To": "treasury-operations@bank.com,treasury-manager@bank.com",
+        "Subject": "Treasury Daily Reconciliation Complete",
+        "Message": "Daily treasury reconciliation completed for %%ODATE. Status: %%JOBSTAT. All positions reconciled within tolerance.",
+        "Urgency": "High"
+      }
+    },
+    "Resources": {
+      "CPU": "4",
+      "Memory": "8GB",
+      "DiskSpace": "2GB"
+    },
+    "SLA": {
+      "ExpectedRunTime": "60",
+      "MaxRunTime": "120",
+      "CriticalPath": "Yes",
+      "BusinessImpact": "Critical"
+    },
+    "PostProcessing": {
+      "OnSuccess": [
+        {
+          "Action": "GenerateReport",
+          "ReportType": "DailyTreasuryPositionReport"
+        },
+        {
+          "Action": "TriggerEvent",
+          "Event": "TreasuryEODComplete-OK"
+        }
+      ],
+      "OnFailure": [
+        {
+          "Action": "EscalateAlert",
+          "Recipients": "treasury-director@bank.com,cfo@bank.com",
+          "Urgency": "Critical"
+        }
+      ]
+    }
+  }
+}

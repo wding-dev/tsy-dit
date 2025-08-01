@@ -1,0 +1,75 @@
+{
+  "CTM_CoreDepositsProcessing": {
+    "Type": "Job:Command",
+    "Application": "Treasury",
+    "SubApplication": "DepositsManagement",
+    "Host": "treasury-etl-server",
+    "RunAs": "treasury_service",
+    "Command": "dtexec /f \"C:\\SSIS\\Packages\\CoreDepositsProcessing.dtsx\" /set \\Package.Variables[User::ProcessingDate].Properties[Value];\"$(ODATE)\" /checkpointing off /reporting ewcdi",
+    "Description": "Process Core Non-Rate Sensitive Deposits and analyze funding sources for liquidity management",
+    "When": {
+      "RuleBasedCalendar": "BusinessDays",
+      "Time": "05:30"
+    },
+    "Priority": "High",
+    "MaxWait": "45",
+    "TaskType": "OS",
+    "CreatedBy": "treasury_admin",
+    "RunAccount": "treasury_service",
+    "LogLevel": "Info",
+    "RetryTimes": "3",
+    "RetryInterval": "10",
+    "Variables": [
+      {
+        "PROCESSING_DATE": "%%ODATE"
+      },
+      {
+        "BRANCH_CODE": "ALL"
+      }
+    ],
+    "Events": [
+      {
+        "Event": "CoreDepositsProcessing-OK",
+        "Action": "ADD"
+      }
+    ],
+    "Conditions": [
+      {
+        "Event": "DepositDataExtract-OK",
+        "Action": "WAIT"
+      }
+    ],
+    "Notification": {
+      "Mail": {
+        "To": "deposits-team@bank.com,treasury-team@bank.com",
+        "Subject": "Core Deposits Processing Job Status",
+        "Message": "Core Deposits Processing completed with status: %%JOBSTAT. Processing Date: %%ODATE",
+        "Urgency": "Normal"
+      }
+    },
+    "Resources": {
+      "CPU": "4",
+      "Memory": "8GB",
+      "DiskSpace": "2GB"
+    },
+    "SLA": {
+      "ExpectedRunTime": "25",
+      "MaxRunTime": "45",
+      "CriticalPath": "Yes"
+    },
+    "PostProcessing": {
+      "OnSuccess": [
+        {
+          "Action": "TriggerEvent",
+          "Event": "DepositsReady-OK"
+        }
+      ],
+      "OnFailure": [
+        {
+          "Action": "SendAlert",
+          "Recipients": "treasury-support@bank.com"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "CTM_TreasuryRiskAnalytics": {
+    "Type": "Job:Command",
+    "Application": "Treasury",
+    "SubApplication": "RiskManagement",
+    "Host": "treasury-etl-server",
+    "RunAs": "treasury_service",
+    "Command": "dtexec /f \"C:\\SSIS\\Packages\\TreasuryRiskAnalytics.dtsx\" /set \\Package.Variables[User::ProcessingDate].Properties[Value];\"$(ODATE)\" /checkpointing off /reporting ewcdi",
+    "Description": "Execute Treasury Risk Analytics including Turnover Ratios, Interest Rate Risk, and Maturity Gap Analysis",
+    "When": {
+      "RuleBasedCalendar": "BusinessDays",
+      "Time": "06:00"
+    },
+    "Priority": "High",
+    "MaxWait": "60",
+    "TaskType": "OS",
+    "CreatedBy": "treasury_admin",
+    "RunAccount": "treasury_service",
+    "LogLevel": "Info",
+    "RetryTimes": "2",
+    "RetryInterval": "5",
+    "Variables": [
+      {
+        "PROCESSING_DATE": "%%ODATE"
+      },
+      {
+        "BUSINESS_UNIT": "Treasury"
+      }
+    ],
+    "Events": [
+      {
+        "Event": "TreasuryRiskAnalytics-OK",
+        "Action": "ADD"
+      }
+    ],
+    "Conditions": [
+      {
+        "Event": "DataLoad-OK",
+        "Action": "WAIT"
+      }
+    ],
+    "Notification": {
+      "Mail": {
+        "To": "treasury-team@bank.com",
+        "Subject": "Treasury Risk Analytics Job Status",
+        "Message": "Treasury Risk Analytics job completed with status: %%JOBSTAT",
+        "Urgency": "Normal"
+      }
+    },
+    "Resources": {
+      "CPU": "2",
+      "Memory": "4GB",
+      "DiskSpace": "1GB"
+    },
+    "SLA": {
+      "ExpectedRunTime": "30",
+      "MaxRunTime": "60",
+      "CriticalPath": "Yes"
+    }
+  }
+}

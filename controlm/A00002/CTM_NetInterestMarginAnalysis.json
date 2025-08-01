@@ -1,0 +1,81 @@
+{
+  "CTM_NetInterestMarginAnalysis": {
+    "Type": "Job:Command",
+    "Application": "Treasury",
+    "SubApplication": "ProfitabilityAnalysis",
+    "Host": "treasury-etl-server",
+    "RunAs": "treasury_service",
+    "Command": "dtexec /f \"C:\\SSIS\\Packages\\NetInterestMarginAnalysis.dtsx\" /set \\Package.Variables[User::AnalysisDate].Properties[Value];\"$(ODATE)\" /checkpointing off /reporting ewcdi",
+    "Description": "Analyze Net Interest Margin by business line and product, process cash flow projections for profitability insights",
+    "When": {
+      "RuleBasedCalendar": "BusinessDays",
+      "Time": "08:00"
+    },
+    "Priority": "Medium",
+    "MaxWait": "60",
+    "TaskType": "OS",
+    "CreatedBy": "treasury_admin",
+    "RunAccount": "treasury_service",
+    "LogLevel": "Info",
+    "RetryTimes": "2",
+    "RetryInterval": "10",
+    "Variables": [
+      {
+        "ANALYSIS_DATE": "%%ODATE"
+      },
+      {
+        "BUSINESS_LINE": "ALL"
+      },
+      {
+        "SCENARIO_TYPE": "Base"
+      }
+    ],
+    "Events": [
+      {
+        "Event": "NetInterestMarginAnalysis-OK",
+        "Action": "ADD"
+      },
+      {
+        "Event": "ProfitabilityAnalysis-Complete",
+        "Action": "ADD"
+      }
+    ],
+    "Conditions": [
+      {
+        "Event": "CoreDepositsProcessing-OK",
+        "Action": "WAIT"
+      },
+      {
+        "Event": "BenchmarkRatesUpdate-OK",
+        "Action": "WAIT"
+      }
+    ],
+    "Notification": {
+      "Mail": {
+        "To": "alm-team@bank.com,finance-team@bank.com",
+        "Subject": "Net Interest Margin Analysis Results",
+        "Message": "NIM Analysis completed for %%ODATE. Status: %%JOBSTAT. Review profitability metrics and cash flow projections.",
+        "Urgency": "Normal"
+      }
+    },
+    "Resources": {
+      "CPU": "3",
+      "Memory": "6GB",
+      "DiskSpace": "1.5GB"
+    },
+    "SLA": {
+      "ExpectedRunTime": "35",
+      "MaxRunTime": "60",
+      "CriticalPath": "No"
+    },
+    "PostProcessing": {
+      "OnSuccess": [
+        {
+          "Action": "ExportData",
+          "Format": "Excel",
+          "Destination": "\\\\shared\\reports\\nim_analysis_%%ODATE.xlsx"
+        }
+      ]
+    }
+  }
+}

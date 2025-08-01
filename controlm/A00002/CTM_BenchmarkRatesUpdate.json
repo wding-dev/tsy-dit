@@ -1,0 +1,102 @@
+{
+  "CTM_BenchmarkRatesUpdate": {
+    "Type": "Job:Command",
+    "Application": "Treasury",
+    "SubApplication": "MarketData",
+    "Host": "treasury-etl-server",
+    "RunAs": "treasury_service",
+    "Command": "dtexec /f \"C:\\SSIS\\Packages\\BenchmarkRatesUpdate.dtsx\" /set \\Package.Variables[User::RateDate].Properties[Value];\"$(ODATE)\" /checkpointing off /reporting ewcdi",
+    "Description": "Update Treasury Benchmark Rates from external market data sources including SOFR, Treasury rates, and other key benchmarks",
+    "When": {
+      "RuleBasedCalendar": "BusinessDays",
+      "Time": "05:00"
+    },
+    "Priority": "High",
+    "MaxWait": "30",
+    "TaskType": "OS",
+    "CreatedBy": "treasury_admin",
+    "RunAccount": "treasury_service",
+    "LogLevel": "Info",
+    "RetryTimes": "3",
+    "RetryInterval": "5",
+    "Variables": [
+      {
+        "RATE_DATE": "%%ODATE"
+      },
+      {
+        "RATE_SOURCE": "Bloomberg"
+      },
+      {
+        "CURRENCY_CODE": "USD"
+      }
+    ],
+    "Events": [
+      {
+        "Event": "BenchmarkRatesUpdate-OK",
+        "Action": "ADD"
+      },
+      {
+        "Event": "MarketDataReady-OK",
+        "Action": "ADD"
+      }
+    ],
+    "Conditions": [
+      {
+        "Event": "MarketOpen-OK",
+        "Action": "WAIT"
+      }
+    ],
+    "Notification": {
+      "Mail": {
+        "To": "market-data-team@bank.com,treasury-team@bank.com",
+        "Subject": "Benchmark Rates Update Status",
+        "Message": "Benchmark rates update completed for %%ODATE. Status: %%JOBSTAT. Data source: Bloomberg",
+        "Urgency": "Normal"
+      }
+    },
+    "Resources": {
+      "CPU": "2",
+      "Memory": "2GB",
+      "DiskSpace": "500MB"
+    },
+    "SLA": {
+      "ExpectedRunTime": "10",
+      "MaxRunTime": "30",
+      "CriticalPath": "Yes"
+    },
+    "DataQuality": {
+      "Checks": [
+        {
+          "Type": "RecordCount",
+          "MinRecords": "5",
+          "Table": "TreasuryBenchmarkRates"
+        },
+        {
+          "Type": "ValueRange",
+          "Field": "RateValue",
+          "MinValue": "0.01",
+          "MaxValue": "20.00"
+        }
+      ]
+    },
+    "PostProcessing": {
+      "OnSuccess": [
+        {
+          "Action": "TriggerEvent",
+          "Event": "RatesDataReady-OK"
+        },
+        {
+          "Action": "UpdateDashboard",
+          "Dashboard": "TreasuryRatesDashboard"
+        }
+      ],
+      "OnFailure": [
+        {
+          "Action": "SendAlert",
+          "Recipients": "market-data-support@bank.com",
+          "Message": "Benchmark rates update failed. Manual intervention required."
+        }
+      ]
+    }
+  }
+}

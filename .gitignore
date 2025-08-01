@@ -1,4 +1,5 @@
 .amazonq
+docker-compose.yml
 
 README.md
 target/

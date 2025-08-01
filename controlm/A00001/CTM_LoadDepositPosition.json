@@ -1,0 +1,30 @@
+{
+  "job_definition": {
+    "name": "CTM_LoadDepositPosition",
+    "application": "Treasury",
+    "command": "\"C:\\\\Program Files\\\\Microsoft SQL Server\\\\150\\\\DTS\\\\Binn\\\\DTExec.exe\" /F \"C:\\\\ssis\\\\LoadDepositPosition.dtsx\"",
+    "node_id": "SSIS_SERVER",
+    "time": "0910",
+    "description": "Runs SSIS package to load daily deposit position"
+  },
+  "original_xml_structure": {
+    "JOBNAME": {
+      "text": "CTM_LoadDepositPosition"
+    },
+    "APPLICATION": {
+      "text": "Treasury"
+    },
+    "COMMAND": {
+      "text": "\"C:\\\\Program Files\\\\Microsoft SQL Server\\\\150\\\\DTS\\\\Binn\\\\DTExec.exe\" /F \"C:\\\\ssis\\\\LoadDepositPosition.dtsx\""
+    },
+    "NODEID": {
+      "text": "SSIS_SERVER"
+    },
+    "TIME": {
+      "text": "0910"
+    },
+    "DESCRIPTION": {
+      "text": "Runs SSIS package to load daily deposit position"
+    }
+  }
+}

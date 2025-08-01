@@ -1,0 +1,30 @@
+{
+  "job_definition": {
+    "name": "CTM_LoadLoanPosition",
+    "application": "Treasury",
+    "command": "\"C:\\\\Program Files\\\\Microsoft SQL Server\\\\150\\\\DTS\\\\Binn\\\\DTExec.exe\" /F \"C:\\\\ssis\\\\LoadLoanPosition.dtsx\"",
+    "node_id": "SSIS_SERVER",
+    "time": "0900",
+    "description": "Runs SSIS package to load daily loan position"
+  },
+  "original_xml_structure": {
+    "JOBNAME": {
+      "text": "CTM_LoadLoanPosition"
+    },
+    "APPLICATION": {
+      "text": "Treasury"
+    },
+    "COMMAND": {
+      "text": "\"C:\\\\Program Files\\\\Microsoft SQL Server\\\\150\\\\DTS\\\\Binn\\\\DTExec.exe\" /F \"C:\\\\ssis\\\\LoadLoanPosition.dtsx\""
+    },
+    "NODEID": {
+      "text": "SSIS_SERVER"
+    },
+    "TIME": {
+      "text": "0900"
+    },
+    "DESCRIPTION": {
+      "text": "Runs SSIS package to load daily loan position"
+    }
+  }
+}

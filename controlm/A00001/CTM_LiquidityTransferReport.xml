@@ -1,0 +1,8 @@
+<Job>
+  <JOBNAME>CTM_LiquidityTransferReport</JOBNAME>
+  <APPLICATION>Treasury</APPLICATION>
+  <COMMAND>"C:\\Program Files\\Microsoft SQL Server\\150\\DTS\\Binn\\DTExec.exe" /F "C:\\ssis\\LiquidityTransferReport.dtsx"</COMMAND>
+  <NODEID>SSIS_SERVER</NODEID>
+  <TIME>0945</TIME>
+  <DESCRIPTION>Runs SSIS to generate liquidity transfer report</DESCRIPTION>
+</Job>

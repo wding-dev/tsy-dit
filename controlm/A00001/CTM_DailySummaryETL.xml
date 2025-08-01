@@ -1,0 +1,8 @@
+<Job>
+  <JOBNAME>CTM_DailySummaryETL</JOBNAME>
+  <APPLICATION>Treasury</APPLICATION>
+  <COMMAND>"C:\\Program Files\\Microsoft SQL Server\\150\\DTS\\Binn\\DTExec.exe" /F "C:\\ssis\\DailySummaryETL.dtsx"</COMMAND>
+  <NODEID>SSIS_SERVER</NODEID>
+  <TIME>1000</TIME>
+  <DESCRIPTION>Runs end-to-end daily summary ETL for treasury</DESCRIPTION>
+</Job>

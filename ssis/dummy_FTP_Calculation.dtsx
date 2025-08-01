@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts" DTS:ExecutableType="SSIS.Package.1">
+  <DTS:Property DTS:Name="PackageFormatVersion">3</DTS:Property>
+  <DTS:Executables>
+    <DTS:Executable DTS:ExecutableType="ExecuteSQLTask">
+      <DTS:Property DTS:Name="Connection">SQLServerConnection</DTS:Property>
+      <DTS:Property DTS:Name="SqlStatementSource">EXEC sp_CalculateFTP @AccountID = 1001</DTS:Property>
+    </DTS:Executable>
+  </DTS:Executables>
+</DTS:Executable>

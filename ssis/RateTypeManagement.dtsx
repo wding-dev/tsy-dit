@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts" DTS:ExecutableType="SSIS.Package.1">
+  <DTS:Property DTS:Name="PackageFormatVersion">3</DTS:Property>
+  <DTS:Executables>
+    <DTS:Executable DTS:ExecutableType="ExecuteSQLTask">
+      <DTS:Property DTS:Name="Connection">SQLServerConnection</DTS:Property>
+      <DTS:Property DTS:Name="SqlStatementSource">
+        -- Update rate types that may have been added or modified
+        MERGE INTO dim_rate_type AS target
+        USING (VALUES 
+          (1, 'Fixed', 'Fixed interest rate'),
+          (2, 'Variable', 'Variable interest rate'),
+          (3, 'Overnight', 'Overnight rate'),
+          (4, 'Term', 'Term deposit rate'),
+          (5, 'Base', 'Base lending rate')
+        ) AS source (rate_type_id, rate_type_name, description)
+        ON target.rate_type_id = source.rate_type_id
+        WHEN MATCHED AND (target.rate_type_name <> source.rate_type_name OR target.description <> source.description) THEN
+          UPDATE SET 
+            rate_type_name = source.rate_type_name,
+            description = source.description,
+            modified_date = GETDATE()
+        WHEN NOT MATCHED BY TARGET THEN
+          INSERT (rate_type_id, rate_type_name, description)
+          VALUES (source.rate_type_id, source.rate_type_name, source.description);
+      </DTS:Property>
+    </DTS:Executable>
+  </DTS:Executables>
+</DTS:Executable>

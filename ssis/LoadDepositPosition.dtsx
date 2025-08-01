@@ -1,0 +1,10 @@
+<Executable>
+  <DTS:Executable DTS:refId="Package" DTS:ExecutableType="SQLTask">
+    <DTS:ObjectData>
+      <SQLTask:SqlTask>
+        <SQLTask:Connection>"Treasury_DB_Connection"</SQLTask:Connection>
+        <SQLTask:SqlStatement>EXEC sp_extract_deposit_position</SQLTask:SqlStatement>
+      </SQLTask:SqlTask>
+    </DTS:ObjectData>
+  </DTS:Executable>
+</Executable>

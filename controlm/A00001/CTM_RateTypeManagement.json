@@ -1,0 +1,30 @@
+{
+  "job_definition": {
+    "name": "CTM_RateTypeManagement",
+    "application": "Treasury",
+    "command": "\"C:\\\\Program Files\\\\Microsoft SQL Server\\\\150\\\\DTS\\\\Binn\\\\DTExec.exe\" /F \"C:\\\\ssis\\\\RateTypeManagement.dtsx\"",
+    "node_id": "SSIS_SERVER",
+    "time": "0830",
+    "description": "Runs SSIS package to manage rate types"
+  },
+  "original_xml_structure": {
+    "JOBNAME": {
+      "text": "CTM_RateTypeManagement"
+    },
+    "APPLICATION": {
+      "text": "Treasury"
+    },
+    "COMMAND": {
+      "text": "\"C:\\\\Program Files\\\\Microsoft SQL Server\\\\150\\\\DTS\\\\Binn\\\\DTExec.exe\" /F \"C:\\\\ssis\\\\RateTypeManagement.dtsx\""
+    },
+    "NODEID": {
+      "text": "SSIS_SERVER"
+    },
+    "TIME": {
+      "text": "0830"
+    },
+    "DESCRIPTION": {
+      "text": "Runs SSIS package to manage rate types"
+    }
+  }
+}

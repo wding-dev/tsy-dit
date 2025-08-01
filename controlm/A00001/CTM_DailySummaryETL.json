@@ -1,0 +1,30 @@
+{
+  "job_definition": {
+    "name": "CTM_DailySummaryETL",
+    "application": "Treasury",
+    "command": "\"C:\\\\Program Files\\\\Microsoft SQL Server\\\\150\\\\DTS\\\\Binn\\\\DTExec.exe\" /F \"C:\\\\ssis\\\\DailySummaryETL.dtsx\"",
+    "node_id": "SSIS_SERVER",
+    "time": "1000",
+    "description": "Runs end-to-end daily summary ETL for treasury"
+  },
+  "original_xml_structure": {
+    "JOBNAME": {
+      "text": "CTM_DailySummaryETL"
+    },
+    "APPLICATION": {
+      "text": "Treasury"
+    },
+    "COMMAND": {
+      "text": "\"C:\\\\Program Files\\\\Microsoft SQL Server\\\\150\\\\DTS\\\\Binn\\\\DTExec.exe\" /F \"C:\\\\ssis\\\\DailySummaryETL.dtsx\""
+    },
+    "NODEID": {
+      "text": "SSIS_SERVER"
+    },
+    "TIME": {
+      "text": "1000"
+    },
+    "DESCRIPTION": {
+      "text": "Runs end-to-end daily summary ETL for treasury"
+    }
+  }
+}
